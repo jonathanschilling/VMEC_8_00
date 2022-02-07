@@ -1,0 +1,178 @@
+This suite of codes includes the following:
+
+CODES:(most codes will respond with useful help information if invoked with the -h command line argument)
+
+V3POST   -- calculates signals in magnetic diagnostics for a particular equilibrium
+V3RFUN   -- calculates vector potentials for magnetic diagnostics and tabulates them 
+            as response functions, which are used by V3POST. Details are contained in 
+            "Magnetic diagnostic responses for compact stellarators", S. P. Hirshman, 
+            E. A. Lazarus, J. D. Hanson, S. F. Knowlton, and L. L. Lao, Physics of Plasmas
+            (to be published, 2003).
+VMEC2000 -- 3D equilibrium solver. Details are in S. P. Hirshman, W. I. van Rij, and P. Merkel,
+            Comp. Phys. Comm. 43 (p 143) 1986.
+MAKEGRID -- Tabulated vacuum B field needed to compute free boundary equilibria in VMEC2000
+PGPROUT  -- Graphical infromation about an equilibrium solution
+LIBSTELL -- Static shared library used to build all of the above codes
+
+Note: README files included at the top of each code subdirectory contain further details
+and complete NAMELIST variable descriptions.
+
+Utilities:
+
+setup    -- A script that creates makefiles and compiles the executables
+tarstell -- commits code changes to a local, compressed archive file called stellunix.tar.Z
+
+External Libraries Required
+
+NETCDF   -- This is integrated into the project. The installation files are available at
+            
+            www.unidata.ucar.edu/packages/netcdf/
+
+            Depending on the size of your diagnostic set, the standard netcdf installation may 
+            require modification of the maximum number of variables before compilation. This 
+            requires the following changes to the two header files:
+
+            1. in netcdf.h
+#define NC_MAX_ATTRS    8192     /* max global or per variable attributes */
+#define NC_MAX_VARS     8192     /* max variables per file */
+
+            2. in netcdf.inc
+      parameter (nf_max_attrs = 8192)
+      parameter (nf_max_vars  = 8192)
+
+            These files occur in multiple places in the netcdf distribution and we suggest you 
+            change all of them. If these changes are not made, V3RFUN will produce copius error 
+            messages to alert you.
+            
+            The codes use a wrapper for NETCDF called EZCDF, available at
+            
+            w3.pppl.gov/NTCC/EZcdf/
+
+            However, it is not necessary to build EZCDF separately, since it is included as part
+            of LIBSTELL.
+
+            All project output files are written in netcdf format, and thus can be moved across 
+            platforms. For IDL users we include the procedure read_rfun_nc.pro that will read any 
+            netcdf file and allow the user to determine its contents. The procedure is (will be) 
+            self-documented.
+
+PGPLOT   -- If you build PGPROUT, the library is required. It is available at
+             
+            www.astro.caltech.edu/~tjp/pgplot/ 
+             
+            Be sure to properly set the environment variable PGPLOT_DIR as described in the 
+            distribution. Also, users may want to set 
+             
+             PGPLOT_FOREGROUND=black, PGPLOT_BACKGROUND=white,
+             PGPLOT_ENVOPT=V, PGPLOT_DEV=/XWINDOW
+             
+            It is not necessary to build the 3D pgxtal package, (http://www.isis.rl.ac.uk/dataanalysis/dsplot/)
+            the necessary functions are built into PGPROUT.
+
+
+
+I. PROJECT INSTALLATION
+
+You should (must) have a directory $HOME/bin prior to running setup.
+To install the vmec/stellarator code suite, do the following:
+
+1. On UNIX (Linux) machines, run the "setup" script in the directory (called 
+   "TOP_LEVEL_DIR" in the example below) where you want the code-suite tree to be built:
+
+   TOP_LEVEL_DIR> chmod u+x setup
+   TOP_LEVEL_DIR> setup
+
+
+2. The setup script will make certain queries prior to the actual file installation. 
+   Here are explanations that should help you to formulate appropriate responses:
+
+
+   a. Enter the software version type to make (release-R, debug-D) :
+     
+        Type (R) to run the make file in release mode, (D) for debug mode make.
+
+   b. Specify project(s) to make from the following list: 
+
+      all booz_xform bootsj bnorm cobra cobravmec coilgeom coilopt descur dkes
+      j_invariant lib makegrid neo nescoil prout pgprout stellopt vmec vmec2000)
+
+        Type all (or ALL, case insensitive) to make all of the files in this list (only
+        those for which sources are available, of course). Alternatively, type a space-delimited 
+        list of selected project files. The library file "lib" will ALWAYS be made, 
+        whether it is explicitly specified here or not.
+
+   c. Specify a CLEAN MAKE (rebuilds existing .o files, even if they are not out of date)
+      or an ORDINARY MAKE (default) - (C/O): 
+
+        Type (C) for a clean remake of all Fortran files. This will delete all the previously
+        compiled object and module files. Type (O) or (Carriage Return, CR) to use the standard 
+        "make" mechanism (i.e., only modified files and dependents will be recompiled).
+        When a major revision of the software has occurred, it is advisable to do a clean remake
+        of all files.
+        
+3.  At this point, the setup script will uncompress the archive file, establish the specified
+    project folderers (if they are not there already), copy the required files to these folder,
+    and automatically run the make utility to compile and link the specified project files.
+        
+
+II. USING MAKE FILES AFTER INSTALLATION (AFTER RUNNING SETUP)
+
+To recompile a project after installation (for example, if any of the files in the Source folder
+have been modified), do the following:
+
+1. cd to the project folder (this sub-directory is denoted here by PROJECT_DIR)
+   and type the following command:
+
+   PROJECT_DIR>  make release (or debug)
+
+   You can force a specific file to be remade (even if has not been changed) by "touching" it.
+   All source files are either in the Source directory, or one of its folders.
+
+   Also, you can perform a clean remake (which, recall, deletes all *.o, *.mod files) as follows:
+
+   PROJECT_DIR>  make clean_release (or clean_debug)
+
+   This obviates the usual "make" mechanism insofar as a complete rebuild is made, even on files 
+   that are not out of date. This may be useful if subsequent source file updates do not link properly, 
+   but should not, in general, be necessary.
+
+
+!!!!!!!!!!!!!!!!!!!!
+IMPORTANT NOTES:
+!!!!!!!!!!!!!!!!!!!!
+Do NOT rerun the setup script AFTER you have modified any of your source files. If you do, setup will
+replace your modified sources with those contained in the archive file. It is advisable to FIRST update 
+the archive file by running tarstell.
+
+You may edit EITHER the Fortran source files located in the Sources folder in each project directory.
+Be advised that these files may contain machine-specific "compiler directives" which will be automatically 
+processed by the C-preprocessor before Fortran compilation occurs. Under no circumstances should these 
+directives - which are characterized by the token !DEC$ in columns1-5 - be in any way altered or deleted!
+
+
+III.  PROJECT EXECUTABLES
+
+For details see the project-specific README files residing in the top level of each branch (project) of
+the top-level directory. The setup script establishes symbolic links in the directory $HOME/bin which point 
+to the respective executables. As long as $HOME/bin is in your path (which is strongly recommended), the 
+executables may be invoked from the command line anywhere in your file system without pathname prefixes. 
+
+    NOTE: If you make a release executable and subsequently make a debug version, the
+    symbolic link in $HOME/bin will be pointing to the LATEST executable that was made. 
+    Rather than re-establishing these links manually,it is recommended to type
+
+    PROJECT_DIR>   make release (or debug)
+
+    which will ONLY remake the link but performs no additional compiling/linking (provided,
+    of course, the source files have not been modified since the previous make).
+
+IV.  DEALING WITH MAKE ERRORS
+
+The most common error I have encountered occurs when the file.o file is present but, for
+whatever reason, the corresponding file.mod module file is absent. In this case, an error
+complaining that the module file(s) is unavailable is likely to appear. In this case, I recommend doing a clean remake:
+
+PROJECT_DIR>  make clean_release (debug)
+
+This will rebuild all the needed modules and .o files. Occassionally, other more subtle errors have been
+noticed, but all of them have been cured by the clean remake process described here.

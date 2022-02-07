@@ -1,0 +1,29 @@
+      FUNCTION pmass (xx)
+      USE stel_kinds
+      USE vmec_input, ONLY: am, bloat,ipmass
+      USE vparams, ONLY: mu0
+C-----------------------------------------------
+      INTEGER     :: i
+      REAL(rprec) :: xx, pmass, x
+      REAL(rprec), parameter :: c1p0=1.0d0
+C-----------------------------------------------
+!     NOTE: On entry, am is in pascals. pmass internal units are mu0*pascals (B**2 units)
+      x = MIN (ABS(xx * bloat), 1._dp)
+
+      pmass = 0
+
+      SELECT CASE(ipmass)
+      CASE(0)
+      CASE(1)
+      pmass = am(0)*(am(1)*(c1p0/(c1p0+(x/am(2)**2)**am(3))**am(4)
+     >                 -c1p0/(c1p0+(c1p0/am(2)**2)**am(3))**am(4))/
+     >            (c1p0-c1p0/(c1p0+(c1p0/am(2)**2)**am(3))**am(4))+
+     >     (c1p0-am(1))*(c1p0/(c1p0+(x/am(5)**2)**am(6))**am(7)
+     >                 -c1p0/(c1p0+(c1p0/am(5)**2)**am(6))**am(7))/
+     >            (c1p0-c1p0/(c1p0+(c1p0/am(5)**2)**am(6))**am(7)))
+      CASE DEFAULT
+        stop 'Invalid mass profile selected'
+      END SELECT
+      pmass = mu0*pmass
+
+      END FUNCTION pmass

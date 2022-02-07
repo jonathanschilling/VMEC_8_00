@@ -1,0 +1,14 @@
+      FUNCTION piota (x)
+      USE stel_kinds
+      USE vmec_input, ONLY: ai
+C-----------------------------------------------
+      INTEGER     :: i
+      REAL(rprec) :: x, piota
+      REAL(rprec), parameter :: pi=3.141592653589793238462643d0
+C-----------------------------------------------
+      piota = 0
+
+      piota = ai(0)+ai(1)*(2/pi)*atan(ai(2)*x**ai(3)/(1-x)**ai(4))
+     >         + ai(5)*(2/pi)*atan(ai(6)*x**ai(7)/(1-x)**ai(8))
+
+      END FUNCTION piota

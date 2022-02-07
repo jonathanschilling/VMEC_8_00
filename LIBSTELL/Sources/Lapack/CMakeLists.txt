@@ -1,0 +1,31 @@
+
+list (APPEND vmec_sources
+	${CMAKE_CURRENT_SOURCE_DIR}/la_getf2.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_nrm2.f
+	${CMAKE_CURRENT_SOURCE_DIR}/li_gbfa.f
+	${CMAKE_CURRENT_SOURCE_DIR}/li_gefa.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_swap.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_trsm.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_scal.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_iamax.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_dot.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_getrf.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_getrs.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_copy.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_gemm.f
+	${CMAKE_CURRENT_SOURCE_DIR}/paxpy_g.f
+	${CMAKE_CURRENT_SOURCE_DIR}/li_gesl.f
+	${CMAKE_CURRENT_SOURCE_DIR}/li_gbsl.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_lsame.f
+	${CMAKE_CURRENT_SOURCE_DIR}/lamch_g.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_ieeeck.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_gesv.f
+	${CMAKE_CURRENT_SOURCE_DIR}/laswp.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_axpy.f
+	${CMAKE_CURRENT_SOURCE_DIR}/bla_ger.f
+	${CMAKE_CURRENT_SOURCE_DIR}/xerbla_g.f
+	${CMAKE_CURRENT_SOURCE_DIR}/la_ilaenv.f
+)
+set (vmec_sources "${vmec_sources}" PARENT_SCOPE)
+
+
